@@ -1,0 +1,125 @@
+﻿@model PagedList.IPagedList<Model.EF.Product>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Quản lý sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Script_footer{
+    <script src="~/Assets/admin/js/JSProductController.js"></script>
+}
+
+@section header{
+    <h1>Quản lý sản phẩm</h1>
+    <ol class="breadcrumb">
+        <li><a href="/Admin"><i class="fa fa-dashboard"></i>Trang chủ</a></li>
+        <li><a href="/Admin/Product">Sản phẩm</a></li>
+        <li class="active">Danh sách sản phẩm</li>
+    </ol>
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+
+            <div class="box-header">
+                <h3 class="box-title">Danh sách sản phẩm</h3>
+                @using (Html.BeginForm("Index", "Product", FormMethod.Get))
+                {
+                    <div class="box-tools pull-right">
+                        <div class="input-group input-group-sm col-md-4 pull-right col-xs-offset-1">
+                            <input type="text" class="form-control pull-right" value="@ViewBag.SearchString" name="searchString" placeholder="Tìm kiếm" />
+                            <div class="input-group-btn">
+                                <button type="submit" id="btn-search" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <a href="/Admin/Product/Create" class="btn btn-info btn-sm"> <i class="fa  fa-plus"></i> Thêm mới</a>
+                        </div>
+                    </div>
+                }
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover table-bordered">
+                    <tr>
+                        <th>
+                            Tên Danh mục
+                        </th>
+                        <th>
+                            Tên Sản phẩm
+                        </th>
+                        <th>
+                            Ảnh sản phẩm
+                        </th>
+                        <th>
+                            Giá
+                        </th>
+                        <th>
+                            Số lượng trong kho
+                        </th>
+                        <th>
+                            Ngày tạo
+                        </th>
+                        <th>
+                            Ngày chỉnh sửa
+                        </th>
+                        <th>
+                            Trạng thái
+                        </th>
+
+                        <th>Công cụ</th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        string classkh = "";
+                        if (item.isActive) { classkh = "label label-success"; } else { classkh = "label label-danger"; }
+                        string stringkh = "";
+                        if (item.isActive) { stringkh = "Kích hoạt"; } else { stringkh = "Khóa"; }
+                    <tr id="row_@item.ProdID">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category.CateName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProdName)
+                        </td>
+                        <td>
+                            <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" width="100px" height="100px" />
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cost)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Wantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdatedAt)
+                        </td>
+                        <td> <a href="#" data-id="@item.ProdID " class="btn-status @classkh">@stringkh</a> </td>
+                        <td>
+                            @Html.ActionLink("Sửa", "Edit", new { id = item.ProdID }) |
+                            <a href="#" data-id="@item.ProdID " class="btn-delete">Xóa</a>
+                        </td>
+                    </tr>
+                    }
+
+                </table>
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <p>Tổng sản phẩm: <span id="totalRows">@Model.Count()</span></p>
+                    </div>
+                    <div class="col-xs-6"><ul id="pagination" class=" pagination-sm no-margin pull-right"></ul></div>
+                </div>
+            </div>
+            <!-- /.box-footer -->
+        </div>
+    </div>
+    <!-- /.box -->
+</div>
